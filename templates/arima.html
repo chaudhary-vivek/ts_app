@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIMA Model</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .slider-container { margin-bottom: 20px; }
+        .slider { width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>ARIMA Model</h1>
+    
+    <div class="slider-container">
+        <label for="p">p (AR order): <span id="p-value">1</span></label>
+        <input type="range" id="p" class="slider" min="0" max="5" step="1" value="1">
+    </div>
+    
+    <div class="slider-container">
+        <label for="d">d (Differencing): <span id="d-value">1</span></label>
+        <input type="range" id="d" class="slider" min="0" max="2" step="1" value="1">
+    </div>
+    
+    <div class="slider-container">
+        <label for="q">q (MA order): <span id="q-value">1</span></label>
+        <input type="range" id="q" class="slider" min="0" max="5" step="1" value="1">
+    </div>
+    
+    <div id="plot"></div>
+
+    <p><a href="/">Go to Triple Exponential Smoothing</a></p>
+
+    <script>
+        function updateGraph() {
+            $.ajax({
+                url: '/update_arima',
+                type: 'POST',
+                data: {
+                    p: $('#p').val(),
+                    d: $('#d').val(),
+                    q: $('#q').val()
+                },
+                success: function(response) {
+                    Plotly.newPlot('plot', response.data, response.layout);
+                }
+            });
+        }
+
+        $('.slider').on('input', function() {
+            $('#' + this.id + '-value').text(this.value);
+            updateGraph();
+        });
+
+        $(document).ready(function() {
+            updateGraph();
+        });
+    </script>
+</body>
+</html>
